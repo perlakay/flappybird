@@ -28,6 +28,12 @@ let pipeY = 0;
 let topPipeImg;
 let bottomPipeImg;
 
+//physics
+let velocityX = -2; //pipes moving left speed
+let velocityY = 0; //bird jump speed
+let gravity = 0.4;
+
+
 window.onload = function() {
     // get canvas and context
     board = document.getElementById("board");
@@ -56,6 +62,7 @@ window.onload = function() {
 
     requestAnimationFrame(update);
     setInterval(placePipes, 1500); //every 1.5 seconds 
+    document.addEventListener("keydown", moveBird);
 };
 
 function update(){
@@ -63,24 +70,53 @@ function update(){
     context.clearRect(0, 0, board.width, board.height);
 
     //bird
+    velocityY += gravity;
+    //bird.y += velocityY;
+    bird.y = Math.max(bird.y + velocityY, 0);
     context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
 
     //pipes
-    for(let i =0; i<pipeArray.length, i++){
+    for(let i =0; i<pipeArray.length; i++){
         let pipe = pipeArray[i];
-        context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe,height)
+        pipe.x += velocityX;
+        context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height)
+
     }
 }
 
 function placePipes(){
+
+    let randomPipeY = pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2);
+    let openingSpace = board.height/4;
+
+
     let topPipe = {
         img : topPipeImg,
         x : pipeX,
-        y : pipeY,
+        y : randomPipeY,
         width : pipeWidth,
         height : pipeHeight,
         passed : false //has the birs passed th epipe 
     }
     pipeArray.push(topPipe);
+
+    let bottomPipe = {
+       img : bottomPipeImg,
+       x : pipeX,
+       y : randomPipeY + pipeHeight + openingSpace,
+       width : pipeWidth,
+       height : pipeHeight,
+       passed : false
+    }
+
+    pipeArray.push(bottomPipe);
+}
+
+function moveBird(e) {
+    if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX") {
+        //jump
+        velocityY = -6;
+
+    }
 }
 
