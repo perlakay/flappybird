@@ -33,6 +33,9 @@ let velocityX = -2; //pipes moving left speed
 let velocityY = 0; //bird jump speed
 let gravity = 0.4;
 
+let gameOver = false;
+let score = 0;
+
 
 window.onload = function() {
     // get canvas and context
@@ -67,6 +70,9 @@ window.onload = function() {
 
 function update(){
     requestAnimationFrame(update);
+    if(gameOver){
+        return;
+    }
     context.clearRect(0, 0, board.width, board.height);
 
     //bird
@@ -75,16 +81,46 @@ function update(){
     bird.y = Math.max(bird.y + velocityY, 0);
     context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
 
+    if (bird.y > board.height) {
+        gameOver = true;
+    }
+
     //pipes
-    for(let i =0; i<pipeArray.length; i++){
+    for (let i = 0; i < pipeArray.length; i++) {
         let pipe = pipeArray[i];
         pipe.x += velocityX;
-        context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height)
+        context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
 
+        if (!pipe.passed && bird.x > pipe.x + pipe.width) {
+            score += 0.5; //0.5 because there are 2 pipes! so 0.5*2 = 1, 1 for each set of pipes
+            pipe.passed = true;
+        }
+
+        if (detectCollision(bird, pipe)) {
+            gameOver = true;
+        }
+    }
+
+    //clear pipes
+    while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
+        pipeArray.shift(); //removes first element from the array
+    }
+
+    //score
+    context.fillStyle = "white";
+    context.font="45px sans-serif";
+    context.fillText(score, 5, 45);
+
+    if (gameOver) {
+        context.fillText("GAME OVER", 5, 90);
     }
 }
 
+
 function placePipes(){
+    if(gameOver){
+        return;
+    }
 
     let randomPipeY = pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2);
     let openingSpace = board.height/4;
@@ -117,6 +153,16 @@ function moveBird(e) {
         //jump
         velocityY = -6;
 
+        //rest game
+        
+
     }
 }
 
+
+function detectCollision(a, b) {
+    return a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y;
+}
