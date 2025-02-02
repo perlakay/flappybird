@@ -154,7 +154,12 @@ function moveBird(e) {
         velocityY = -6;
 
         //rest game
-        
+        if (gameOver){
+            bird.y = birdY
+            pipeArray = [];
+            score = 0;
+            gameOver = false;
+        }
 
     }
 }
