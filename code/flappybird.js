@@ -142,7 +142,7 @@ function placePipes(){
        y : randomPipeY + pipeHeight + openingSpace,
        width : pipeWidth,
        height : pipeHeight,
-       passed : false
+       passed: false 
     }
 
     pipeArray.push(bottomPipe);
@@ -151,11 +151,11 @@ function placePipes(){
 function moveBird(e) {
     if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX") {
         //jump
-        velocityY = -6;
+        velocityY = -6; 
 
         //rest game
         if (gameOver){
-            bird.y = birdY
+            bird.y = birdY 
             pipeArray = [];
             score = 0;
             gameOver = false;
@@ -165,7 +165,7 @@ function moveBird(e) {
 }
 
 
-function detectCollision(a, b) {
+function detectCollision(a, b) {  
     return a.x < b.x + b.width &&
         a.x + a.width > b.x &&
         a.y < b.y + b.height &&
